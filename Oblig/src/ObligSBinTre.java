@@ -627,6 +627,21 @@ public class ObligSBinTre<T> implements Beholder<T>
 
         Node<T> currNode = rot;
 
+        //Hvis roten ikke har et høyre subtre
+
+        if(rot.høyre == null){
+
+            while(currNode.høyre == null && currNode.venstre != null){
+
+                stringBuilder.append(currNode + ", ");
+
+                currNode = currNode.venstre;
+
+
+            }
+
+        }
+
         while(currNode.høyre != null){
 
             stringBuilder.append(currNode.verdi + ", ");
@@ -765,7 +780,74 @@ public class ObligSBinTre<T> implements Beholder<T>
 
     public String[] grener()
     {
-        throw new UnsupportedOperationException("Ikkke kodet ennå");
+
+        if(tom()){
+            return new String[] {};
+        }
+        if(antall == 1){
+            return new String[] {"[" +rot.verdi + "]"};
+        }
+
+        //Finner antall grener ved å finne antall bladnoder.
+
+        int antallBlader = 0;
+
+        //Stakk som skal holde på bladnodene
+
+        Stakk<Node<T>> bladNoder = new TabellStakk<>();
+
+        Node<T> currNode = rot;
+
+        //finner første node inorden
+
+        while(currNode.venstre != null){
+
+            currNode = currNode.venstre;
+
+
+        }
+
+        //Finner og teller opp alle bladnoder. Legger de også på stacken.
+        while(nesteInorden(currNode) != null){
+
+            if(currNode.venstre == null && currNode.høyre == null){
+
+                antallBlader++;
+                bladNoder.leggInn(currNode);
+
+            }
+                currNode = nesteInorden(currNode);
+
+        }
+
+
+        //Opretter en String tabell
+
+
+
+        String[] grener = new String[antallBlader];
+
+
+        for(int i = grener.length-1; i >= 0; i--){
+
+            StringBuilder stringBuilder = new StringBuilder("[");
+
+            Node<T> p = bladNoder.taUt();
+
+            while(p.forelder != null){
+
+                stringBuilder.append(p.verdi + ", ");
+
+                p = p.forelder;
+            }
+
+            stringBuilder.append(p.verdi + "]");
+
+            grener[i] = stringBuilder.reverse().toString();
+        }
+
+        return grener;
+
     }
 
     public String bladnodeverdier()
