@@ -17,7 +17,9 @@ public class Main {
         // [I, T, J, R, O, L, M, N]
         // [I, T, J, R, O, P, Q]
         // [I, T, J, R, S]
-
+        System.out.println(tre.bladnodeverdier());// Utskrift: [D, G, K, N, Q, S]
+        // En for-alle-løkke bruker iteratoren implisitt
+        for (Character c : tre) System.out.print(c + " "); // D G K N Q S
 
     }
 

@@ -55,6 +55,8 @@ public class ObligSBinTre<T> implements Beholder<T>
         else if (cmp < 0) q.venstre = p;         // venstre barn til q
         else q.høyre = p;                        // høyre barn til q
 
+
+        endringer++;
         antall++;                                // én verdi mer i treet
         return true;                             // vellykket innlegging
     }
@@ -344,7 +346,8 @@ public class ObligSBinTre<T> implements Beholder<T>
             }
         }
 
-        antall--;   // det er nå én node mindre i treet
+        endringer++;
+        antall--;// det er nå én node mindre i treet
         return true;
 
 
@@ -852,12 +855,122 @@ public class ObligSBinTre<T> implements Beholder<T>
 
     public String bladnodeverdier()
     {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+        if(tom()){
+            return "[]";
+        }
+
+        if(antall == 1){
+            return "[" + rot + "]";
+        }
+
+        StringBuilder stringBuilder = new StringBuilder("[");
+
+
+        //Finner første inorden
+
+        Node<T> currNode = rot;
+
+        while(currNode.venstre != null){
+
+            currNode = currNode.venstre;
+
+        }
+
+
+
+        StringBuilder stringBuilder1 = addNodes(stringBuilder, currNode);
+
+        return stringBuilder1.replace(stringBuilder1.length()-2, stringBuilder1.length()-1, "]").toString();
+
+
+
+       // return addNodes(stringBuilder, currNode).toString();
+
+
     }
+
+    public StringBuilder addNodes(StringBuilder stringBuilder, Node<T> node){
+        if(node != null){
+
+
+        //Sjekker om noden er en bladnode.
+        if(node.venstre == null && node.høyre == null){
+
+            //Sjekker om det er siste bladnoden
+
+
+              //  stringBuilder.append(node + "]");
+
+
+                stringBuilder.append(node.verdi + ", ");
+
+
+        }
+
+        node = nesteInorden(node);
+        addNodes(stringBuilder, node);
+        }
+
+        return stringBuilder;
+    }
+
+
 
     public String postString()
     {
-        throw new UnsupportedOperationException("Ikke kodet ennå!");
+
+        if(tom()){
+            return "[]";
+        }
+
+        if(antall == 1){
+            return "[" + rot + "]";
+        }
+
+
+
+        Stakk<Node<T>> stakk = new TabellStakk<>();
+        Stakk<Node<T>> stakk1 = new TabellStakk<>();
+
+        Node<T> currNode = rot;
+        Node<T> p;
+
+        StringBuilder stringBuilder = new StringBuilder("[");
+
+        stakk.leggInn(currNode);
+
+        while(!stakk.tom()){
+
+            p = stakk.taUt();
+            stakk1.leggInn(p);
+
+            if(p.venstre != null){
+
+            stakk.leggInn(p.venstre);
+            }
+            if(p.høyre!= null){
+
+            stakk.leggInn(p.høyre);
+            }
+        }
+
+        while(!stakk1.tom()){
+
+            if(stakk1.antall() == 1){
+
+                stringBuilder.append(stakk1.taUt().verdi + "]");
+            }else{
+
+            stringBuilder.append(stakk1.taUt().verdi + ", ");
+            }
+
+
+
+        }
+
+        return stringBuilder.toString();
+
+
     }
     @Override
     public Iterator<T> iterator()
@@ -873,7 +986,34 @@ public class ObligSBinTre<T> implements Beholder<T>
 
         private BladnodeIterator() // konstruktør
         {
-            throw new UnsupportedOperationException("Ikke kodet ennå!");
+            if(!tom()){
+
+                //Finner førsteinorden
+                Node<T> curr = rot;
+
+                while(curr.venstre!= null){
+                    curr = curr.venstre;
+                }
+
+                while (true){
+
+                    //Dersom noden er en bladnode
+                    if(curr.høyre == null && curr.venstre == null){
+
+                        break;
+                    }
+
+                    curr = nesteInorden(curr);
+
+                }
+
+                p = curr;
+
+
+
+
+
+            }
         }
 
         @Override
@@ -885,7 +1025,54 @@ public class ObligSBinTre<T> implements Beholder<T>
         @Override
         public T next()
         {
-            throw new UnsupportedOperationException("Ikke kodet ennå!");
+
+            removeOK = true;
+
+            if(endringer != iteratorendringer){
+                throw new ConcurrentModificationException();
+            }
+
+            //Sjekker om det ikke er flere igjen
+            Node<T> currNode = p;
+
+          if(!hasNext()){
+              throw new NoSuchElementException();
+          }
+
+
+         if(p == null)
+            throw new NoSuchElementException("Elementet finnes ikke");
+
+
+         Node<T> curr = p;
+            T value= p.verdi;
+
+            curr = nesteInorden(curr);
+
+
+            if(curr == null){
+
+                p = null;
+                return value;
+            }
+
+
+            while(curr != null){
+
+                if(curr.venstre == null && curr.høyre == null){
+
+                    p = curr;
+                    return value;
+
+                }
+
+                curr = nesteInorden(curr);
+
+            }
+
+            p = null;
+            return value;
+
         }
 
         @Override
