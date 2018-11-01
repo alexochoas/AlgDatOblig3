@@ -33,7 +33,7 @@ public class Oblig3Test
         antallFeil += oppgave7();
         antallFeil += oppgave8();
         antallFeil += oppgave9();
-        //antallFeil += oppgave10();
+       antallFeil += oppgave10();
 
         if (antallFeil == 0)
         {
@@ -955,8 +955,10 @@ public class Oblig3Test
 
     }  // slutt pÃ¥ Oppgave 9
 
-/*
+
 // OPPGAVE 10 ////////////////////////////////////////////////
+
+
 
     public static int oppgave10()
     {
@@ -1087,7 +1089,6 @@ public class Oblig3Test
             antallFeil++;
             System.out.println("Oppgave 10l: Feil i metoden remove()!");
         }
-
         tre.fjernHvis(x -> true);
 
         if (!tre.toString().equals("[7, 11]"))
