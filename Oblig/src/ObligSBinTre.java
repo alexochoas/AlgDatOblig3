@@ -701,7 +701,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
 
             }
-
+ 
             node = nesteInorden(node);
             addNodes(stringBuilder, node);
         }
